@@ -11,67 +11,72 @@ import base64
 # Page configuration
 st.markdown("""
 <style>
-    /* Main background */
+    /* Light mode styles */
+    :root {
+        --primary-bg: #f5f7fa;
+        --primary-text: #1a365d;
+        --secondary-bg: #ffffff;
+        --sidebar-bg: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);
+        --sidebar-text: #ffffff;
+        --input-bg: #ffffff;
+        --input-text: #1a365d;
+        --metric-bg: #ffffff;
+        --metric-border: #e2e8f0;
+        --info-box-bg: #ebf8ff;
+        --feature-box-bg: #ffffff;
+    }
+
+    /* Dark mode styles */
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --primary-bg: #1a1a2e;
+            --primary-text: #e6e6e6;
+            --secondary-bg: #16213e;
+            --sidebar-bg: linear-gradient(135deg, #0f3460 0%, #1a1a2e 100%);
+            --sidebar-text: #e6e6e6;
+            --input-bg: #16213e;
+            --input-text: #e6e6e6;
+            --metric-bg: #16213e;
+            --metric-border: #1e3a8a;
+            --info-box-bg: #1e3a8a;
+            --feature-box-bg: #16213e;
+        }
+        
+        /* Dark mode specific adjustments */
+        .stDataFrame {
+            background-color: var(--secondary-bg) !important;
+            color: var(--primary-text) !important;
+        }
+        
+        /* Plotly charts */
+        .js-plotly-plot .plotly, 
+        .js-plotly-plot .plotly .modebar {
+            background-color: transparent !important;
+        }
+    }
+
+    /* Base styles */
     .stApp {
-        background-color: #f5f7fa;
-        color: #1a365d;  /* Default text color for the main app - dark blue */
+        background-color: var(--primary-bg);
+        color: var(--primary-text);
     }
     
-    /* Headers in main content area */
+    h1, h2, h3, h4, h5, h6 {
+        color: var(--primary-text);
+        font-family: 'Arial', sans-serif;
+    }
+    
     h1 {
-        color: #1a365d;
-        font-family: 'Arial Black', sans-serif;
         border-bottom: 3px solid #4f46e5;
         padding-bottom: 10px;
     }
     
-    h2 {
-        color: #2d3748; /* Darker gray for H2 */
-        font-family: 'Arial', sans-serif;
-    }
-    
-    h3 {
-        color: #4a5568; /* Medium gray for H3 */
-        font-family: 'Arial', sans-serif;
-    }
-    
-    /* Main content general text color */
-    .main .block-container {
-        color: #2d3748; /* General text color for main content area */
-    }
-    
-    /* Metric containers */
-    [data-testid="metric-container"] {
-        background-color: #ffffff;
-        border: 1px solid #e2e8f0;
-        padding: 15px;
-        border-radius: 12px;
-        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-    }
-    
-    /* Metric labels (e.g., "Total Predictions") */
-    [data-testid="metric-container"] label {
-        color: #4a5568 !important; /* Darker grey for metric labels */
-    }
-    
-    /* Metric values (e.g., "10", "89.2%") */
-    [data-testid="metric-container"] div[data-testid="stMetricValue"] {
-        color: #1a365d !important; /* Dark blue for metric values */
-        font-weight: bold !important;
-    }
-
-    /* Metric delta values */
-    [data-testid="metric-container"] div[data-testid="stMetricDelta"] {
-        color: #2d3748 !important; /* Ensure delta values are also readable, e.g., dark gray */
-    }
-    
     /* Sidebar styling */
-    .css-1d391kg, .css-1d391kg > div { /* Target the main sidebar container and its direct children */
-        background-color: #1a365d;
-        background-image: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);
+    .css-1d391kg, .css-1d391kg > div {
+        background: var(--sidebar-bg);
     }
     
-    /* Sidebar text - ensure ALL text is light */
+    /* Sidebar text - ensure ALL text is readable */
     .css-1d391kg, 
     .css-1d391kg .stMarkdown, 
     .css-1d391kg .stMarkdown *,
@@ -84,43 +89,54 @@ st.markdown("""
     .css-1d391kg .stMarkdown h4,
     .css-1d391kg .stMarkdown h5,
     .css-1d391kg .stMarkdown h6 {
-        color: #ffffff !important;
+        color: var(--sidebar-text) !important;
     }
     
-    /* Widget values in sidebar */
-    .css-1d391kg .stSlider .st-ae, 
-    .css-1d391kg .stSlider .st-af {
-        color: #ffffff !important;
-    }
-    
-    /* Widget input fields */
+    /* Input fields */
     .stTextInput input, 
     .stNumberInput input, 
-    .stSelectbox .st-bd,
+    .stSelectbox select,
     .stTextArea textarea {
-        background-color: #ffffff !important;
-        color: #1a365d !important;
+        background-color: var(--input-bg) !important;
+        color: var(--input-text) !important;
         border-radius: 8px !important;
+        border: 1px solid var(--metric-border) !important;
     }
     
-    /* Checkbox and radio button labels */
-    .css-1d391kg .stCheckbox > label > div:first-child,
-    .css-1d391kg .stRadio div[role="radiogroup"] > label > div:first-child {
-        color: #ffffff !important;
-    }
-
-    /* Selectbox dropdown */
-    div[data-baseweb="select"] div[role="option"] {
-        color: #1a365d !important;
-    }
-    div[data-baseweb="select"] div[role="listbox"] {
-        background-color: #ffffff !important;
-    }
-
-    /* Success/Warning/Error boxes */
-    .stAlert {
+    /* Metric containers */
+    [data-testid="metric-container"] {
+        background-color: var(--metric-bg);
+        border: 1px solid var(--metric-border);
+        padding: 15px;
         border-radius: 12px;
-        border-left: 5px solid;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    }
+    
+    /* Metric values */
+    [data-testid="metric-container"] div[data-testid="stMetricValue"] {
+        color: var(--primary-text) !important;
+        font-weight: bold !important;
+    }
+
+    /* Info boxes */
+    .info-box {
+        background-color: var(--info-box-bg);
+        border-left: 4px solid #3182ce;
+        padding: 18px;
+        margin: 12px 0;
+        border-radius: 8px;
+        color: var(--primary-text);
+    }
+    
+    /* Feature importance box */
+    .feature-box {
+        background-color: var(--feature-box-bg);
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        margin: 12px 0;
+        border: 1px solid var(--metric-border);
+        color: var(--primary-text);
     }
     
     /* Buttons */
@@ -142,42 +158,10 @@ st.markdown("""
         box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
     }
     
-    /* Info boxes */
-    .info-box {
-        background-color: #ebf8ff;
-        border-left: 4px solid #3182ce;
-        padding: 18px;
-        margin: 12px 0;
-        border-radius: 8px;
-        color: #2d3748;
-    }
-    
-    /* Feature importance box */
-    .feature-box {
-        background-color: #ffffff;
-        padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-        margin: 12px 0;
-        border: 1px solid #e2e8f0;
-        color: #2d3748;
-    }
-    
     /* Tabs */
-    .stTabs [data-baseweb="tab-list"] {
-        gap: 8px;
-    }
-    
     .stTabs [data-baseweb="tab"] {
-        background-color: #e2e8f0;
-        border-radius: 8px 8px 0 0 !important;
-        padding: 10px 20px !important;
-        transition: all 0.3s;
-        color: #2d3748 !important;
-    }
-    
-    .stTabs [data-baseweb="tab"]:hover {
-        background-color: #cbd5e0;
+        background-color: var(--metric-bg);
+        color: var(--primary-text) !important;
     }
     
     .stTabs [aria-selected="true"] {
@@ -185,27 +169,24 @@ st.markdown("""
         color: white !important;
     }
     
-    /* Gauge chart improvements */
-    .gauge .title {
-        fill: #4a5568 !important;
-        font-weight: bold !important;
-    }
-    
-    /* Data table improvements */
+    /* Data tables */
     .stDataFrame {
         border-radius: 8px !important;
         box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1) !important;
     }
     
-    /* Footer */
-    .footer {
-        color: #718096;
-        font-size: 0.9rem;
+    /* Make sure all text in main content is readable */
+    .stMarkdown, 
+    .stMarkdown p, 
+    .stText, 
+    .stText p,
+    .stAlert {
+        color: var(--primary-text) !important;
     }
     
-    /* Main content text */
-    .stMarkdown, .stMarkdown p, .stText, .stText p {
-        color: #2d3748 !important;
+    /* Plotly chart background */
+    .plotly-graph-div.js-plotly-plot {
+        background: transparent !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -235,15 +216,16 @@ def load_feature_names():
             features = [line.strip() for line in f.readlines()]
         return features
     except FileNotFoundError:
-        st.error("Feature names file (feature_names.txt) not found. Please ensure it's available.")
-        # If file not found, return default features based on your analysis
-        # IMPORTANT: Replace with actual feature names if you cannot create the file
-        return ['Administrative', 'Administrative_Duration', 'Informational', 'Informational_Duration',
-                'ProductRelated', 'ProductRelated_Duration', 'BounceRates', 'ExitRates',
-                'PageValues', 'SpecialDay', 'OperatingSystems', 'Browser', 'Region',
-                'TrafficType', 'Weekend', 'Month_Aug', 'Month_Dec', 'Month_Feb', 'Month_Jul',
-                'Month_June', 'Month_Mar', 'Month_May', 'Month_Nov', 'Month_Oct', 'Month_Sep',
-                'VisitorType_New_Visitor', 'VisitorType_Other', 'VisitorType_Returning_Visitor']
+        st.error("Feature names file (feature_names.txt) not found. Using default features.")
+        # Default features based on the model's expected inputs
+        return [
+            'Administrative', 'Administrative_Duration', 'Informational', 'Informational_Duration',
+            'ProductRelated', 'ProductRelated_Duration', 'BounceRates', 'ExitRates',
+            'PageValues', 'SpecialDay', 'OperatingSystems', 'Browser', 'Region',
+            'TrafficType', 'Weekend', 'Month_Aug', 'Month_Dec', 'Month_Feb', 'Month_Jul',
+            'Month_June', 'Month_Mar', 'Month_May', 'Month_Nov', 'Month_Oct', 'Month_Sep',
+            'VisitorType_New_Visitor', 'VisitorType_Other', 'VisitorType_Returning_Visitor'
+        ]
     except Exception as e:
         st.error(f"Error loading feature names: {e}")
         return None
@@ -260,19 +242,20 @@ with st.sidebar:
     st.markdown("---")
     
     # Basic Information
-    st.markdown("### 👤 Visitor Information") # This one was likely problematic
+    st.markdown("### Visitor Information")
     visitor_type = st.selectbox("Visitor Type", ["Returning_Visitor", "New_Visitor", "Other"])
     weekend = st.checkbox("Weekend Visit", value=False)
     
     # Temporal Information
-    st.markdown("### 📅 Temporal Data") # This one was likely problematic
-    month_options = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    st.markdown("### Temporal Data")
+    # Only include months that were in the training data
+    month_options = ["Feb", "Mar", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
     month = st.selectbox("Month", month_options)
     special_day = st.slider("Special Day", 0.0, 1.0, 0.0, 0.1,
         help="Closeness to a special day (0=No special day, 1=Special day)")
     
     # Page Interaction
-    st.markdown("### 📱 Page Interactions") # This one was likely problematic
+    st.markdown("### Page Interactions")
     administrative = st.number_input("Administrative Pages", 0, 50, 2)
     administrative_duration = st.number_input("Administrative Duration (seconds)", 0.0, 5000.0, 80.0)
     
@@ -283,7 +266,7 @@ with st.sidebar:
     product_related_duration = st.number_input("Product Related Duration (seconds)", 0.0, 50000.0, 1200.0)
     
     # Engagement Metrics
-    st.markdown("### 📈 Engagement Metrics") # This one was likely problematic
+    st.markdown("### Engagement Metrics")
     page_values = st.slider("Page Values", 0.0, 500.0, 5.0, 0.1,
         help="Average value of pages visited (KEY PREDICTOR!)")
     bounce_rates = st.slider("Bounce Rate", 0.0, 0.3, 0.02, 0.001,
@@ -292,7 +275,7 @@ with st.sidebar:
         help="Percentage of exits from the site")
     
     # Technical Information
-    st.markdown("### 💻 Technical Details") # This one was likely problematic
+    st.markdown("### Technical Details")
     operating_systems = st.selectbox("Operating System", list(range(1, 9)))
     browser = st.selectbox("Browser", list(range(1, 14)))
     region = st.selectbox("Region", list(range(1, 10)))
@@ -313,76 +296,98 @@ with tab1:
             model = load_model()
             
             if model is not None:
-                # Create input dataframe
-                input_data = pd.DataFrame({
-                    'Administrative': [administrative],
-                    'Administrative_Duration': [administrative_duration],
-                    'Informational': [informational],
-                    'Informational_Duration': [informational_duration],
-                    'ProductRelated': [product_related],
-                    'ProductRelated_Duration': [product_related_duration],
-                    'BounceRates': [bounce_rates],
-                    'ExitRates': [exit_rates],
-                    'PageValues': [page_values],
-                    'SpecialDay': [special_day],
-                    'Month': [month],
-                    'OperatingSystems': [operating_systems],
-                    'Browser': [browser],
-                    'Region': [region],
-                    'TrafficType': [traffic_type],
-                    'VisitorType': [visitor_type],
-                    'Weekend': [weekend]
-                })
+                # Create input data with manual one-hot encoding
+                input_data = {
+                    'Administrative': administrative,
+                    'Administrative_Duration': administrative_duration,
+                    'Informational': informational,
+                    'Informational_Duration': informational_duration,
+                    'ProductRelated': product_related,
+                    'ProductRelated_Duration': product_related_duration,
+                    'BounceRates': bounce_rates,
+                    'ExitRates': exit_rates,
+                    'PageValues': page_values,
+                    'SpecialDay': special_day,
+                    'OperatingSystems': operating_systems,
+                    'Browser': browser,
+                    'Region': region,
+                    'TrafficType': traffic_type,
+                    'Weekend': int(weekend),
+                    # Month features (based on training data)
+                    'Month_Aug': 1 if month == 'Aug' else 0,
+                    'Month_Dec': 1 if month == 'Dec' else 0,
+                    'Month_Feb': 1 if month == 'Feb' else 0,
+                    'Month_Jul': 1 if month == 'Jul' else 0,
+                    'Month_June': 1 if month == 'Jun' else 0,
+                    'Month_Mar': 1 if month == 'Mar' else 0,
+                    'Month_May': 1 if month == 'May' else 0,
+                    'Month_Nov': 1 if month == 'Nov' else 0,
+                    'Month_Oct': 1 if month == 'Oct' else 0,
+                    'Month_Sep': 1 if month == 'Sep' else 0,
+                    # VisitorType features
+                    'VisitorType_New_Visitor': 1 if visitor_type == 'New_Visitor' else 0,
+                    'VisitorType_Other': 1 if visitor_type == 'Other' else 0,
+                    'VisitorType_Returning_Visitor': 1 if visitor_type == 'Returning_Visitor' else 0
+                }
                 
-                # One-hot encode categorical variables
-                input_encoded = pd.get_dummies(input_data)
+                # Convert to DataFrame
+                input_df = pd.DataFrame(input_data, index=[0])
                 
-                # Align with training features
-                feature_names = load_feature_names()
-                if feature_names:
+                # Get feature names (try model first, then fallback to file)
+                try:
+                    feature_names = model.feature_names_in_
+                except AttributeError:
+                    feature_names = load_feature_names()
+                
+                if feature_names is not None and len(feature_names) > 0:
                     # Create a dataframe with all features, fill missing with 0
                     aligned_input = pd.DataFrame(0, index=[0], columns=feature_names)
-                    for col in input_encoded.columns:
+                    for col in input_df.columns:
                         if col in aligned_input.columns:
-                            aligned_input[col] = input_encoded[col].values
+                            aligned_input[col] = input_df[col].values
                     
                     # Make prediction
-                    prediction = model.predict(aligned_input)[0]
-                    probability = model.predict_proba(aligned_input)[0]
-                    
+                    prediction = model.predict(aligned_input)
+                    probability = model.predict_proba(aligned_input)
+
+                    # Ensure we're working with scalar values
+                    prediction_value = prediction[0]  # Get the first (and only) prediction
+                    probability_value = probability[0][1]  # Probability for class 1 (purchase)
+
                     # Store prediction
                     st.session_state.predictions.append({
                         'timestamp': datetime.now(),
-                        'prediction': prediction,
-                        'probability': probability[1],
+                        'prediction': prediction_value,
+                        'probability': probability_value,
                         'page_values': page_values,
                         'month': month
                     })
-                    
+
                     # Display results
                     st.markdown("### 🎯 Prediction Results")
-                    
-                    if prediction:
+
+                    # Explicit boolean check
+                    if prediction_value == 1:  # Explicit comparison with integer
                         st.success("✅ **HIGH PURCHASE PROBABILITY**")
                         st.balloons()
                     else:
                         st.warning("❌ **LOW PURCHASE PROBABILITY**")
-                    
-                    # Probability gauge
+
+                    # Probability gauge - use the scalar probability_value
                     fig = go.Figure(go.Indicator(
                         mode = "gauge+number+delta",
-                        value = probability[1] * 100,
+                        value = probability_value * 100,  # Use the scalar value
                         domain = {'x': [0, 1], 'y': [0, 1]},
                         title = {'text': "Purchase Probability (%)"},
                         delta = {'reference': 50},
                         gauge = {
                             'axis': {'range': [None, 100]},
-                            'bar': {'color': "#4f46e5"}, # Match button color
+                            'bar': {'color': "#4f46e5"},
                             'steps': [
-                                {'range': [0, 25], 'color': "#cbd5e0"}, # Light grey
-                                {'range': [25, 50], 'color': "#a0aec0"}, # Medium grey
-                                {'range': [50, 75], 'color': "#90ee90"}, # Light green
-                                {'range': [75, 100], 'color': "#3cb371"} # Medium sea green
+                                {'range': [0, 25], 'color': "#cbd5e0"},
+                                {'range': [25, 50], 'color': "#a0aec0"},
+                                {'range': [50, 75], 'color': "#90ee90"},
+                                {'range': [75, 100], 'color': "#3cb371"}
                             ],
                             'threshold': {
                                 'line': {'color': "red", 'width': 4},
@@ -395,7 +400,7 @@ with tab1:
                     st.plotly_chart(fig, use_container_width=True)
                     
                 else:
-                    st.error("Feature names file not found. Please ensure feature_names.txt is available and correctly formatted.")
+                    st.error("Feature names could not be loaded. Please ensure feature_names.txt is available.")
             else:
                 st.error("Model could not be loaded. Please check the model file.")
     
@@ -404,7 +409,6 @@ with tab1:
         st.markdown('<div class="feature-box">', unsafe_allow_html=True)
         
         # Show importance of current inputs
-        # These are hardcoded examples, ideally these would come from SHAP values or model's feature importance for the specific prediction
         importance_data = {
             'Feature': ['Page Values', 'Month (Aug)', 'Bounce Rate', 'Product Pages'],
             'Your Value': [
@@ -556,7 +560,7 @@ with tab4:
     with col1:
         st.markdown("""
         ### 🎯 Purpose
-        This application predicts whether an e-commerce website visitor will make a purchase based on their Browse behavior and session characteristics.
+        This application predicts whether an e-commerce website visitor will make a purchase based on their browsing behavior and session characteristics.
         
         ### 🔧 Technology Stack
         - **Model**: Random Forest Classifier
@@ -576,7 +580,7 @@ with tab4:
         ### 💡 Use Cases
         1. **Real-time Personalization** - Customize user experience for high-intent visitors
         2. **Marketing Optimization** - Focus resources on high-probability segments
-        2. **Inventory Management** - Prepare for seasonal peaks (especially August)
+        3. **Inventory Management** - Prepare for seasonal peaks (especially August)
         4. **Conversion Rate Optimization** - Identify and fix high bounce rate issues
         
         ### 🚀 Future Enhancements

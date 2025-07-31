@@ -589,8 +589,7 @@ with tab4:
     st.markdown("---")
     st.markdown("""
     <div style='text-align: center; color: #7f8c8d;'>
-    <p>Built with ❤️ using Streamlit and Scikit-learn</p>
-    <p>© 2024 E-Commerce Analytics Platform</p>
+    <p>Built with Blood, Sweat and Tears</p>
     </div>
     """, unsafe_allow_html=True)
 
@@ -598,6 +597,6 @@ with tab4:
 st.markdown("---")
 st.markdown("""
 <div style='text-align: center; color: #95a5a6;'>
-    <small>For support or questions, contact: analytics@ecommerce.com | Version 1.0</small>
+    <smallMLDP Project by Khidir</small>
 </div>
 """, unsafe_allow_html=True)
